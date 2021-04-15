@@ -1,0 +1,12 @@
+/*.iml
+/.idea
+/config/target
+/config/*.iml
+/gateway/target
+/gateway/*.iml
+/registry/target
+/registry/*.iml
+/service-a/target
+/service-a/*.iml
+/service-b/target
+/service-b/*.iml
