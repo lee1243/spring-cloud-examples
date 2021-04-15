@@ -1,0 +1,7 @@
+spring:
+  cloud:
+    config:
+      name: service-a
+      uri: http://localhost:8000
+#      username: user
+#      password: 123456
