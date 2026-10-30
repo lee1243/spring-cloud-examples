@@ -1,9 +1,36 @@
 spring:
   application:
     name: service-a
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:bankdemo;MODE=MySQL;DB_CLOSE_DELAY=-1
+    username: sa
+    password:
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
 
 server:
   port: 8010
+
+# 银行业务演示相关配置（防重/幂等/对账）
+bank:
+  dedup:
+    token-expire-seconds: 60      # 防重令牌有效期
+    window-seconds: 5             # 注解防重默认拦截窗口
+  idempotent:
+    processing-timeout-seconds: 30  # 幂等处理中超时，超过视为悬挂交易
+  recon:
+    cron: "0 0 2 * * ?"           # 日终对账定时任务
+    auto-fix-amount-diff: true    # 金额不符是否自动以渠道为准调账
+    parallelism: 4                # 多线程对账并行度（1 则降级为串行）
+    shard-size: 500               # 单个分片最大流水数，与并行度共同决定分片个数
+    await-timeout-seconds: 120    # 等待全部分片完成的总超时，超时分片列入未完成清单
+    lock-stale-minutes: 30        # 对账运行锁陈旧阈值，超过可抢占（防实例崩溃后死锁）
+    queue-capacity: 200           # 对账线程池队列容量
+    await-termination-seconds: 60 # 停机时等待在途分片完成的最长秒数
+    parallel-booking: false       # 差错调账是否并行；调账写账户行为热点，默认串行，开启后按账户并查集分组隔离
 
 # Eureka相关配置
 eureka:
